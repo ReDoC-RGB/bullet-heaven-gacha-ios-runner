@@ -1,0 +1,11 @@
+{
+  "adaptation": "identity, profile, manifest contract, result names, and release authority",
+  "applicationSourceIncluded": false,
+  "schema": "bhg_ios_runner_reference_snapshot_v1",
+  "signingMaterialIncluded": false,
+  "sourceBuildSignReturnSha256": "6935e55fcbd2d09a43cc5068ea87c1b35d7af626af981a904176373456ba34a3",
+  "sourceCommit": "459b8478361d0aae0d603eff6eae78ca4add70ae",
+  "sourceProject": "Quiet Worlds",
+  "sourceTree": "88976f32071163da5cff9057ecc309fcd87a717b",
+  "sourceWorkflowSha256": "82a6001c75a6620444b332fb966a75be6e9c7bb4264dbb0c2d33a6c35552ad83"
+}

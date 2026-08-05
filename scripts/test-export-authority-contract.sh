@@ -10,6 +10,9 @@ for name in "${required[@]}"; do
   grep -Fq "$name" "$runner" || { printf 'runner missing exact authority validation %s\n' "$name" >&2; exit 1; }
 done
 for stale in \
+  44bab041101971978ab39fc7f56dd4a73e6344ee86583a9edc5bf5a4b28fa750 \
+  1774dd6790a2189fbc913927bdfbbb6bd0fd9938 \
+  a2b30d3bce97310dc3c6612833649360187e0dd4 \
   62740c60118f9867ac787baadfb8058f935ded317c9d8dc1b4f871bc010c68dd \
   486a64ce469a5e6c61564633ab43a3ce04a9d3aa78de62005063e471b5c75a6b \
   936aec62751d6b9fe183ca0875bdf37bfc1e8dfa557bbff479b2f88735ac09fd \
@@ -37,13 +40,13 @@ if missing: raise SystemExit('missing fail-closed exact authority checks: '+repr
 x=json.loads(Path(sys.argv[2]).read_text())
 expected={
  'schema':1,
- 'archiveSha256':'44bab041101971978ab39fc7f56dd4a73e6344ee86583a9edc5bf5a4b28fa750',
- 'manifestSha256':'632aa3208516aa8ff120461a924fe9198a71862672af4b4fec31cca22ce7ff42',
- 'manifestByteLength':686702,
+ 'archiveSha256':'3995f2ed4172b95852c87c7c8b56a8e0582761a228e217e113992a6fe9088caf',
+ 'manifestSha256':'0f1630de0ca92672fb43c5efa8e8e77356e50e33b9b7c7f049800b1de9f5ca7d',
+ 'manifestByteLength':686627,
  'inventoryCount':3076,
- 'framedTreeSha256':'7d844d0c78ddb71e5cb334452871d5d95f06c1f6f47f54853dba21b366d77f0a',
- 'candidateCommit':'1774dd6790a2189fbc913927bdfbbb6bd0fd9938',
- 'candidateTree':'a2b30d3bce97310dc3c6612833649360187e0dd4',
+ 'framedTreeSha256':'6f4bcf79f86bcd802ba1cc4906b222f88c6091abc907722ed99f76b384a847e1',
+ 'candidateCommit':'ad95709b70c4f3db3c69ed243276a7ac8e55fcdb',
+ 'candidateTree':'46e1b04a870a5d2f8d3ecd167c9da4c035e2058f',
 }
 if x!=expected: raise SystemExit('tracked final export authority mismatch')
 for token in ['release-authority.json',"'archiveSha256':os.environ['BHG_EXPORT_SHA256']","'manifestSha256':os.environ['BHG_EXPORT_MANIFEST_SHA256']","'inventoryCount':int(os.environ['BHG_EXPORT_INVENTORY_COUNT'])","'candidateCommit':os.environ['BHG_CANDIDATE_COMMIT']"]:

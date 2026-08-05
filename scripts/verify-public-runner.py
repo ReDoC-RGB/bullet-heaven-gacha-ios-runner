@@ -20,14 +20,14 @@ from pathlib import Path, PurePosixPath
 
 
 BUNDLE = "com.wellmadesystems.bulletheavengacha.audition"
-BUILD_NUMBER = "7"
-VERSION = "1.6"
+BUILD_NUMBER = "8"
+VERSION = "1.7"
 EXPECTED_TEAM = "7D88UFWRTZ"
 EXPECTED_PROFILE_UUID = "94d6d06b-6de2-4a35-b0ca-bc3e04efd801"
 EXPECTED_PROFILE_SHA = "9261cfa49f68b936a2f0bf5fc65b657718812e1b810523a792cfafee98b9f9ff"
 EXPECTED_CERT_SHA = "3870fd7a823c074b79fdf2862c3a57b5432bcce43b963e759f81ea3789e1a107"
-EXPECTED_ARCHIVE_SHA = "44bab041101971978ab39fc7f56dd4a73e6344ee86583a9edc5bf5a4b28fa750"
-EXPECTED_ARCHIVE_BYTES = 301577101
+EXPECTED_ARCHIVE_SHA = "3995f2ed4172b95852c87c7c8b56a8e0582761a228e217e113992a6fe9088caf"
+EXPECTED_ARCHIVE_BYTES = 301584497
 HEX40 = re.compile(r"[0-9a-f]{40}")
 HEX64 = re.compile(r"[0-9a-f]{64}")
 
@@ -61,7 +61,7 @@ def load_manifest(path: Path) -> dict:
     required = {
         "schema",
         "status",
-        "created_at_utc",
+        "createdAtUtc",
         "candidateCommit",
         "candidateTree",
         "candidateParent",
@@ -77,17 +77,16 @@ def load_manifest(path: Path) -> dict:
         "inventoryBytes",
         "framedTreeSha256",
         "unityLogSha256",
-        "admissionSha256",
-        "attemptLedgerSha256",
+        "projectSettingsMutationPatchSha256",
         "fileInventory",
     }
     if set(manifest) != required:
         raise SystemExit("detached manifest shape mismatch")
-    if manifest["schema"] != "bullet_heaven_gacha_gate_d_ios_xcode_export_manifest_v1" or manifest["status"] != "PASS":
+    if manifest["schema"] != "bullet_heaven_gacha_gate_d_ios_xcode_export_manifest_v2" or manifest["status"] != "PASS":
         raise SystemExit("detached manifest schema/status mismatch")
     if not HEX40.fullmatch(manifest["candidateCommit"]) or not HEX40.fullmatch(manifest["candidateTree"]):
         raise SystemExit("candidate provenance shape mismatch")
-    if manifest["candidateCommit"] != "1774dd6790a2189fbc913927bdfbbb6bd0fd9938" or manifest["candidateTree"] != "a2b30d3bce97310dc3c6612833649360187e0dd4":
+    if manifest["candidateCommit"] != "ad95709b70c4f3db3c69ed243276a7ac8e55fcdb" or manifest["candidateTree"] != "46e1b04a870a5d2f8d3ecd167c9da4c035e2058f":
         raise SystemExit("candidate provenance authority mismatch")
     if (
         manifest["bundleIdentifier"] != BUNDLE
@@ -98,7 +97,7 @@ def load_manifest(path: Path) -> dict:
         or manifest["signed"] is not False
     ):
         raise SystemExit("detached manifest application identity mismatch")
-    for key in ("framedTreeSha256", "unityLogSha256", "admissionSha256", "attemptLedgerSha256"):
+    for key in ("framedTreeSha256", "unityLogSha256", "projectSettingsMutationPatchSha256"):
         if not HEX64.fullmatch(manifest[key]):
             raise SystemExit("detached manifest hash shape mismatch")
     inventory = manifest["fileInventory"]

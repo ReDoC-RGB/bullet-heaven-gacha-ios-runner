@@ -20,14 +20,14 @@ from pathlib import Path, PurePosixPath
 
 
 BUNDLE = "com.wellmadesystems.bulletheavengacha.audition"
-BUILD_NUMBER = "11"
-VERSION = "1.10"
+BUILD_NUMBER = "33"
+VERSION = "1.32"
 EXPECTED_TEAM = "7D88UFWRTZ"
 EXPECTED_PROFILE_UUID = "94d6d06b-6de2-4a35-b0ca-bc3e04efd801"
 EXPECTED_PROFILE_SHA = "9261cfa49f68b936a2f0bf5fc65b657718812e1b810523a792cfafee98b9f9ff"
 EXPECTED_CERT_SHA = "3870fd7a823c074b79fdf2862c3a57b5432bcce43b963e759f81ea3789e1a107"
-EXPECTED_ARCHIVE_SHA = "66816bb9b5f90190ba9227137236b2e9df663352de4a65dc9cba17d8bbde585f"
-EXPECTED_ARCHIVE_BYTES = 301601588
+EXPECTED_ARCHIVE_SHA = "da5e6fc08a1ac5abf2af8560c23e660e3edba2a3cc457f7c9f34f9f10f23cb61"
+EXPECTED_ARCHIVE_BYTES = 306759023
 HEX40 = re.compile(r"[0-9a-f]{40}")
 HEX64 = re.compile(r"[0-9a-f]{64}")
 
@@ -86,7 +86,7 @@ def load_manifest(path: Path) -> dict:
         raise SystemExit("detached manifest schema/status mismatch")
     if not HEX40.fullmatch(manifest["candidateCommit"]) or not HEX40.fullmatch(manifest["candidateTree"]):
         raise SystemExit("candidate provenance shape mismatch")
-    if manifest["candidateCommit"] != "e3249e5bff1a7b624b52f926a38f467eb69230a1" or manifest["candidateTree"] != "6f66b9ae5990472e32779ad837058b58b6490d3d":
+    if manifest["candidateCommit"] != "d13fce0d7b969f5643f164704c6e8688fe96046d" or manifest["candidateTree"] != "53620367efa237df3bfe059a57604f480b5ba727":
         raise SystemExit("candidate provenance authority mismatch")
     if (
         manifest["bundleIdentifier"] != BUNDLE

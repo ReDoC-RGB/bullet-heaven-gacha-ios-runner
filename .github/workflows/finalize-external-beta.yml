@@ -1,0 +1,80 @@
+name: Finalize Rivetkind External TestFlight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rivetkind-external-beta-build-36
+  cancel-in-progress: false
+
+jobs:
+  finalize-external-beta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout infrastructure snapshot
+        uses: actions/checkout@v4
+
+      - name: Finalize external beta
+        env:
+          RIVETKIND_ASC_KEY_ID: ${{ secrets.RIVETKIND_ASC_KEY_ID }}
+          RIVETKIND_ASC_ISSUER_ID: ${{ secrets.RIVETKIND_ASC_ISSUER_ID }}
+          RIVETKIND_ASC_PRIVATE_KEY_B64: ${{ secrets.RIVETKIND_ASC_PRIVATE_KEY_B64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${RIVETKIND_ASC_KEY_ID}"
+          test -n "${RIVETKIND_ASC_ISSUER_ID}"
+          test -n "${RIVETKIND_ASC_PRIVATE_KEY_B64}"
+          secure_root="$(mktemp -d)"
+          trap 'rm -rf -- "${secure_root}"' EXIT
+          receipt_root="${RUNNER_TEMP}/rivetkind-external-beta-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          mkdir -p "${receipt_root}"
+          chmod 0700 "${secure_root}" "${receipt_root}"
+          export RIVETKIND_SECURE_ROOT="${secure_root}"
+          python3 - <<'PY'
+          import base64
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ["RIVETKIND_SECURE_ROOT"])
+          key = root / "AuthKey.p8"
+          key.write_bytes(base64.b64decode(os.environ["RIVETKIND_ASC_PRIVATE_KEY_B64"], validate=True))
+          key.chmod(0o600)
+          env = root / "apple.env"
+          env.write_text(
+              "APP_STORE_CONNECT_KEY_ID=" + os.environ["RIVETKIND_ASC_KEY_ID"] + "\n"
+              "APP_STORE_CONNECT_ISSUER_ID=" + os.environ["RIVETKIND_ASC_ISSUER_ID"] + "\n",
+              encoding="utf-8",
+          )
+          env.chmod(0o600)
+          PY
+          unset RIVETKIND_ASC_PRIVATE_KEY_B64 RIVETKIND_ASC_KEY_ID RIVETKIND_ASC_ISSUER_ID
+          python3 -m pip install --disable-pip-version-check --quiet 'PyJWT[crypto]==2.10.1' 'requests==2.32.4'
+          python3 scripts/finalize-external-beta.py \
+            --apple-env "${secure_root}/apple.env" \
+            --api-key "${secure_root}/AuthKey.p8" \
+            --receipt "${receipt_root}/external-beta-receipt.json" \
+            --timeout-seconds 1800
+
+      - name: Upload sanitized external beta receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rivetkind-external-beta-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/rivetkind-external-beta-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 9
+
+      - name: Always remove API material
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "${RIVETKIND_SECURE_ROOT:-}" && -d "${RIVETKIND_SECURE_ROOT}" ]]; then
+            rm -rf -- "${RIVETKIND_SECURE_ROOT}"
+          fi

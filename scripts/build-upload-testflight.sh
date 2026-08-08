@@ -232,12 +232,24 @@ set +e
 xcrun altool --validate-app --type ios --file "${IPA}" --apiKey "${RIVETKIND_ASC_KEY_ID}" --apiIssuer "${RIVETKIND_ASC_ISSUER_ID}" --output-format json >"${VALIDATE_LOG}" 2>&1
 VALIDATE_STATUS=$?
 set -e
-[[ "${VALIDATE_STATUS}" -eq 0 ]] || { printf 'Apple validation failed in protected log\n' >&2; exit 11; }
+if [[ "${VALIDATE_STATUS}" -ne 0 ]]; then
+  python3 "${GITHUB_WORKSPACE}/scripts/stage-xcode-diagnostic.py" --raw-log "${VALIDATE_LOG}" \
+    --output-dir "${DIAGNOSTIC_DIR}" --exit-status "${VALIDATE_STATUS}" --phase validation \
+    --protected-values-file "${PROTECTED_VALUES_FILE}" || true
+  printf 'Apple validation failed; sanitized diagnostic staged\n' >&2
+  exit 11
+fi
 set +e
 xcrun altool --upload-app --type ios --file "${IPA}" --apiKey "${RIVETKIND_ASC_KEY_ID}" --apiIssuer "${RIVETKIND_ASC_ISSUER_ID}" --output-format json >"${UPLOAD_LOG}" 2>&1
 UPLOAD_STATUS=$?
 set -e
-[[ "${UPLOAD_STATUS}" -eq 0 ]] || { printf 'Apple upload failed in protected log\n' >&2; exit 12; }
+if [[ "${UPLOAD_STATUS}" -ne 0 ]]; then
+  python3 "${GITHUB_WORKSPACE}/scripts/stage-xcode-diagnostic.py" --raw-log "${UPLOAD_LOG}" \
+    --output-dir "${DIAGNOSTIC_DIR}" --exit-status "${UPLOAD_STATUS}" --phase upload \
+    --protected-values-file "${PROTECTED_VALUES_FILE}" || true
+  printf 'Apple upload failed; sanitized diagnostic staged\n' >&2
+  exit 12
+fi
 
 mkdir -p "${RESULT_DIR}"
 export RIVETKIND_IPA_SHA="$(shasum -a 256 "${IPA}" | cut -d ' ' -f 1)"

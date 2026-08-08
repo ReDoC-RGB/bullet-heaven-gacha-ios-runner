@@ -111,6 +111,19 @@ def main() -> None:
 
     assert build is not None
     build_id = build["id"]
+    if build["attributes"].get("buildAudienceType") != "APP_STORE_ELIGIBLE":
+        raise RuntimeError("build 36 is not eligible for external TestFlight distribution")
+    build_app = apple.request(
+        "GET", f"/v1/builds/{build_id}/relationships/app", {200}
+    )["data"]
+    if build_app.get("id") != APP_ID:
+        raise RuntimeError("build 36 belongs to an unexpected App Store Connect app")
+    groups = apple.request(
+        "GET", f"/v1/apps/{APP_ID}/betaGroups", {200}, params={"limit": "200"}
+    )["data"]
+    target_groups = [item for item in groups if item["id"] == GROUP_ID]
+    if len(target_groups) != 1 or target_groups[0]["attributes"].get("isInternalGroup") is not False:
+        raise RuntimeError("the authorized external TestFlight group is unavailable")
     encryption_before = build["attributes"].get("usesNonExemptEncryption")
     if encryption_before is not False:
         result = apple.request(
@@ -169,17 +182,33 @@ def main() -> None:
         )["data"]
         localization_created = True
 
-    apple.request(
-        "POST",
-        f"/v1/betaGroups/{GROUP_ID}/relationships/builds",
-        {204},
-        json={"data": [{"type": "builds", "id": build_id}]},
-    )
     assigned = apple.request(
-        "GET", f"/v1/betaGroups/{GROUP_ID}/relationships/builds", {200}
+        "GET", f"/v1/betaGroups/{GROUP_ID}/builds", {200}, params={"limit": "200"}
     )["data"]
     if build_id not in {item["id"] for item in assigned}:
-        raise RuntimeError("build was not assigned to Rivetkind External Beta")
+        assignment_deadline = time.monotonic() + 600
+        while True:
+            response = apple.session.request(
+                "POST",
+                API_ROOT + f"/v1/builds/{build_id}/relationships/betaGroups",
+                timeout=45,
+                json={"data": [{"type": "betaGroups", "id": GROUP_ID}]},
+            )
+            if response.status_code == 204:
+                break
+            if response.status_code == 404 and time.monotonic() < assignment_deadline:
+                print("Apple external-group relationship is still propagating; retrying", flush=True)
+                time.sleep(20)
+                continue
+            raise RuntimeError(
+                "Apple API external-group assignment failed with HTTP "
+                f"{response.status_code}: {response.text[:1800]}"
+            )
+        assigned = apple.request(
+            "GET", f"/v1/betaGroups/{GROUP_ID}/builds", {200}, params={"limit": "200"}
+        )["data"]
+        if build_id not in {item["id"] for item in assigned}:
+            raise RuntimeError("build was not assigned to Rivetkind External Beta")
 
     submissions = apple.request(
         "GET",

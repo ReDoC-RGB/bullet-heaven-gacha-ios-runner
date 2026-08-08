@@ -20,14 +20,14 @@ from pathlib import Path, PurePosixPath
 
 
 BUNDLE = "com.wellmadesystems.bulletheavengacha.audition"
-BUILD_NUMBER = "35"
-VERSION = "1.34"
+BUILD_NUMBER = "36"
+VERSION = "1.35"
 EXPECTED_TEAM = "7D88UFWRTZ"
 EXPECTED_PROFILE_UUID = "94d6d06b-6de2-4a35-b0ca-bc3e04efd801"
 EXPECTED_PROFILE_SHA = "9261cfa49f68b936a2f0bf5fc65b657718812e1b810523a792cfafee98b9f9ff"
 EXPECTED_CERT_SHA = "3870fd7a823c074b79fdf2862c3a57b5432bcce43b963e759f81ea3789e1a107"
-EXPECTED_ARCHIVE_SHA = "5477fe329737105af8e0b492d0b4b74260beabdb72bc99d3021b72f68dcd8849"
-EXPECTED_ARCHIVE_BYTES = 308229229
+EXPECTED_ARCHIVE_SHA = "485f4fc0c7990f4b15096e3305c240bb4b3f1890d7682434b1dbc2cfbb13a8e1"
+EXPECTED_ARCHIVE_BYTES = 253420541
 HEX40 = re.compile(r"[0-9a-f]{40}")
 HEX64 = re.compile(r"[0-9a-f]{64}")
 
@@ -82,18 +82,18 @@ def load_manifest(path: Path) -> dict:
     }
     if set(manifest) != required:
         raise SystemExit("detached manifest shape mismatch")
-    if manifest["schema"] != "rivetkind_phase1k_ios_xcode_export_manifest_v1" or manifest["status"] != "PASS":
+    if manifest["schema"] != "rivetkind_phase1l_ios_xcode_export_manifest_v1" or manifest["status"] != "PASS":
         raise SystemExit("detached manifest schema/status mismatch")
     if not HEX40.fullmatch(manifest["candidateCommit"]) or not HEX40.fullmatch(manifest["candidateTree"]):
         raise SystemExit("candidate provenance shape mismatch")
-    if manifest["candidateCommit"] != "f4685259f9904d4071999c47dd4cecdec07544d1" or manifest["candidateTree"] != "5f1585770ee01d27bc1a9cbcabd85370ab355f32":
+    if manifest["candidateCommit"] != "61fe47ce9ad52afe492641a4bc7aea8eb723860e" or manifest["candidateTree"] != "4a84addf860dfb1ba43eb0ed78aa9869b9661585":
         raise SystemExit("candidate provenance authority mismatch")
     if (
         manifest["bundleIdentifier"] != BUNDLE
         or str(manifest["buildNumber"]) != BUILD_NUMBER
         or manifest["marketingVersion"] != VERSION
         or manifest["teamIdentifier"] != EXPECTED_TEAM
-        or manifest["buildOptions"] != "Development"
+        or manifest["buildOptions"] != "None"
         or manifest["signed"] is not False
     ):
         raise SystemExit("detached manifest application identity mismatch")
@@ -270,8 +270,8 @@ def verify_ipa(args) -> None:
     expected_info = {
         "BHGCandidateCommit": manifest["candidateCommit"],
         "BHGCandidateTree": manifest["candidateTree"],
-        "BHGBuildDesignation": "INTERNAL",
-        "BHGBuildPipeline": "gate-d-native-v1",
+        "BHGBuildDesignation": "EXTERNAL_BETA",
+        "BHGBuildPipeline": "testflight-native-v2",
         "BHGBuildProvenance": "private-linux-unity-export",
     }
     if any(info.get(key) != value for key, value in expected_info.items()):
@@ -319,7 +319,7 @@ def verify_ipa(args) -> None:
     verification = {
         "schema": 1,
         "status": "PASS",
-        "runner": "macos-15",
+        "runner": "macos-26",
         "ipaSha256": sha_file(ipa),
         "ipaByteLength": ipa.stat().st_size,
         "bundleIdentifier": BUNDLE,
@@ -329,8 +329,8 @@ def verify_ipa(args) -> None:
         "candidateTree": manifest["candidateTree"],
         "exportArchiveSha256": EXPECTED_ARCHIVE_SHA,
         "exportFramedTreeSha256": manifest["framedTreeSha256"],
-        "designation": "INTERNAL",
-        "pipeline": "gate-d-native-v1",
+        "designation": "EXTERNAL_BETA",
+        "pipeline": "testflight-native-v2",
         "provenance": "private-linux-unity-export",
         "profileSha256": profile_sha,
         "profileUuid": decoded.get("UUID"),

@@ -36,6 +36,7 @@ readonly EXPECTED_PROFILE_UUID="94d6d06b-6de2-4a35-b0ca-bc3e04efd801"
 readonly EXPECTED_PROFILE_SHA="9261cfa49f68b936a2f0bf5fc65b657718812e1b810523a792cfafee98b9f9ff"
 readonly EXPECTED_CERT_SHA="3870fd7a823c074b79fdf2862c3a57b5432bcce43b963e759f81ea3789e1a107"
 mkdir -p "${ROOT}"
+bash "${GITHUB_WORKSPACE}/scripts/require-xcode26.sh"
 PROTECTED_VALUES_FILE="${ROOT}/protected-values.nul"
 python3 - "${PROTECTED_VALUES_FILE}" <<'PY'
 import os,re,sys

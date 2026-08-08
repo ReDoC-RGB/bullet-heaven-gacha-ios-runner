@@ -16,8 +16,8 @@ done
 
 readonly EXPECTED_TEAM_ID="7D88UFWRTZ"
 readonly EXPECTED_BUNDLE="com.wellmadesystems.bulletheavengacha.audition"
-readonly EXPECTED_VERSION="1.34"
-readonly EXPECTED_BUILD="35"
+readonly EXPECTED_VERSION="1.35"
+readonly EXPECTED_BUILD="36"
 readonly EXPECTED_PROFILE_NAME="Rivetkind TestFlight App Store v1"
 readonly EXPECTED_PROFILE_UUID="71a04e62-08f5-4602-a0ba-c4a493ec9578"
 readonly EXPECTED_PROFILE_SHA="74e871f8c0230508983303e80f07d5517cf4a61eec245ca4bc233a524e0ff371"
@@ -32,6 +32,8 @@ EXPORT_MANIFEST="${ROOT}/rivetkind-xcode-export-manifest.json"
 mkdir -p "${ROOT}"
 cleanup() { bash "${GITHUB_WORKSPACE}/scripts/cleanup-testflight.sh"; }
 trap cleanup EXIT
+
+bash "${GITHUB_WORKSPACE}/scripts/require-xcode26.sh"
 
 PROTECTED_VALUES_FILE="${ROOT}/protected-values.nul"
 python3 - "${PROTECTED_VALUES_FILE}" <<'PY'
@@ -198,7 +200,7 @@ python3 - "${APP}/Info.plist" "${APP}/embedded.mobileprovision" "${EXPORT_MANIFE
 import hashlib,json,plistlib,subprocess,sys,tempfile
 info=plistlib.load(open(sys.argv[1],'rb')); manifest=json.load(open(sys.argv[3],encoding='utf-8'))
 assert info['CFBundleIdentifier']=='com.wellmadesystems.bulletheavengacha.audition'
-assert info['CFBundleShortVersionString']=='1.34' and str(info['CFBundleVersion'])=='35'
+assert info['CFBundleShortVersionString']=='1.35' and str(info['CFBundleVersion'])=='36'
 assert info['BHGCandidateCommit']==manifest['candidateCommit'] and info['BHGCandidateTree']==manifest['candidateTree']
 profile_bytes=open(sys.argv[2],'rb').read()
 assert hashlib.sha256(profile_bytes).hexdigest()=='74e871f8c0230508983303e80f07d5517cf4a61eec245ca4bc233a524e0ff371'
@@ -260,7 +262,7 @@ python3 - "${RESULT_DIR}/testflight-upload-receipt.json" <<'PY'
 import json,os,sys
 x={
  'schema':'rivetkind_testflight_upload_v1','status':'PASS','appId':'6799331457',
- 'bundleIdentifier':'com.wellmadesystems.bulletheavengacha.audition','versionName':'1.34','buildNumber':35,
+ 'bundleIdentifier':'com.wellmadesystems.bulletheavengacha.audition','versionName':'1.35','buildNumber':36,
  'candidateCommit':os.environ['BHG_CANDIDATE_COMMIT'],'candidateTree':os.environ['BHG_CANDIDATE_TREE'],
  'ipaSha256':os.environ['RIVETKIND_IPA_SHA'],'ipaBytes':int(os.environ['RIVETKIND_IPA_BYTES']),
  'profileUuid':'71a04e62-08f5-4602-a0ba-c4a493ec9578',
@@ -274,4 +276,4 @@ x={
 open(sys.argv[1],'w',encoding='utf-8').write(json.dumps(x,indent=2,sort_keys=True)+'\n')
 PY
 chmod 0600 "${RESULT_DIR}/testflight-upload-receipt.json"
-printf 'PASS Rivetkind 1.34 build 35 uploaded to Apple TestFlight processing\n'
+printf 'PASS Rivetkind 1.35 build 36 uploaded to Apple TestFlight processing\n'

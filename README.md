@@ -2,6 +2,6 @@
 
 This public repository contains infrastructure only. It has no application source, Unity project, generated Xcode project, game asset, signing material, APK, or IPA.
 
-The sole manual workflow uses a standard GitHub-hosted `macos-15` runner. It downloads one private, hash-pinned Unity Xcode export; verifies the detached manifest and complete archive inventory before extraction; imports protected Ad Hoc signing inputs into an ephemeral keychain; compiles and signs one IPA; verifies its identity and provenance; stages the verified IPA and verification JSON in one bounded, one-day GitHub Actions artifact; and destroys transient payload and signing state.
+The manual workflows use a standard GitHub-hosted `macos-26` runner and fail closed unless Xcode 26 with the iPhoneOS 26 SDK (or newer) is active. They download one private, hash-pinned Unity Xcode export; verify the detached manifest and complete archive inventory before extraction; import protected signing inputs into an ephemeral keychain; compile and sign one IPA; verify its identity and provenance; and destroy transient payload and signing state.
 
-The workflow publishes only the bounded one-day result or sanitized failure-diagnostic artifact and has no automatic trigger. The currently authorized payload is Rivetkind v1.34 build 35.
+The workflows publish only bounded result or sanitized failure-diagnostic artifacts and have no automatic trigger. The currently authorized payload is Rivetkind v1.35 build 36.

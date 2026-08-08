@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed verifier for the Bullet Heaven public macOS signing runner."""
+"""Fail-closed verifier for the Rivetkind public macOS signing runner."""
 
 from __future__ import annotations
 
@@ -20,14 +20,14 @@ from pathlib import Path, PurePosixPath
 
 
 BUNDLE = "com.wellmadesystems.bulletheavengacha.audition"
-BUILD_NUMBER = "33"
-VERSION = "1.32"
+BUILD_NUMBER = "35"
+VERSION = "1.34"
 EXPECTED_TEAM = "7D88UFWRTZ"
 EXPECTED_PROFILE_UUID = "94d6d06b-6de2-4a35-b0ca-bc3e04efd801"
 EXPECTED_PROFILE_SHA = "9261cfa49f68b936a2f0bf5fc65b657718812e1b810523a792cfafee98b9f9ff"
 EXPECTED_CERT_SHA = "3870fd7a823c074b79fdf2862c3a57b5432bcce43b963e759f81ea3789e1a107"
-EXPECTED_ARCHIVE_SHA = "da5e6fc08a1ac5abf2af8560c23e660e3edba2a3cc457f7c9f34f9f10f23cb61"
-EXPECTED_ARCHIVE_BYTES = 306759023
+EXPECTED_ARCHIVE_SHA = "5477fe329737105af8e0b492d0b4b74260beabdb72bc99d3021b72f68dcd8849"
+EXPECTED_ARCHIVE_BYTES = 308229229
 HEX40 = re.compile(r"[0-9a-f]{40}")
 HEX64 = re.compile(r"[0-9a-f]{64}")
 
@@ -82,11 +82,11 @@ def load_manifest(path: Path) -> dict:
     }
     if set(manifest) != required:
         raise SystemExit("detached manifest shape mismatch")
-    if manifest["schema"] != "bullet_heaven_gacha_gate_d_ios_xcode_export_manifest_v2" or manifest["status"] != "PASS":
+    if manifest["schema"] != "rivetkind_phase1k_ios_xcode_export_manifest_v1" or manifest["status"] != "PASS":
         raise SystemExit("detached manifest schema/status mismatch")
     if not HEX40.fullmatch(manifest["candidateCommit"]) or not HEX40.fullmatch(manifest["candidateTree"]):
         raise SystemExit("candidate provenance shape mismatch")
-    if manifest["candidateCommit"] != "d13fce0d7b969f5643f164704c6e8688fe96046d" or manifest["candidateTree"] != "53620367efa237df3bfe059a57604f480b5ba727":
+    if manifest["candidateCommit"] != "f4685259f9904d4071999c47dd4cecdec07544d1" or manifest["candidateTree"] != "5f1585770ee01d27bc1a9cbcabd85370ab355f32":
         raise SystemExit("candidate provenance authority mismatch")
     if (
         manifest["bundleIdentifier"] != BUNDLE

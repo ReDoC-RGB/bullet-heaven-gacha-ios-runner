@@ -1,4 +1,4 @@
-name: Build and return signed Bullet Heaven Gacha Audition Ad Hoc IPA
+name: Build and return signed Rivetkind Ad Hoc IPA
 
 on:
   workflow_dispatch: {}

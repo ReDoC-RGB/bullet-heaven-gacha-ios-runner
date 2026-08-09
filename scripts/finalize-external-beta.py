@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Finalize Rivetkind build 39 for the existing external TestFlight group."""
+"""Finalize Rivetkind build 40 for the existing external TestFlight group."""
 
 from __future__ import annotations
 
@@ -17,15 +17,16 @@ import requests
 API_ROOT = "https://api.appstoreconnect.apple.com"
 APP_ID = "6799331457"
 GROUP_ID = "4ed23db8-45ce-4a56-b68f-8a98b89308c0"
-BUILD_NUMBER = "39"
+BUILD_NUMBER = "40"
 LOCALE = "en-US"
 WHAT_TO_TEST = (
-    "Test Rivetkind 1.38 build 39. Run away continuously and confirm enemies keep fair "
-    "pressure from ahead and the sides without visible pop-ins or impossible escapes. "
-    "Coin rewards should be much lower than build 38. During an upgrade choice, use the "
-    "two reroll tokens and confirm each refresh offers three distinct, character-correct "
-    "choices; a third reroll must be unavailable. Report unfair spawns, pathing stalls, "
-    "reward duplication, excessive coins, broken rerolls, or non-Mia in-run choices."
+    "Test Rivetkind 1.39 build 40. On the Weapon screen, independently equip any unlocked "
+    "ranged and melee weapon for Daniel and Mia. Confirm each character retains their own "
+    "pair, the Home and Character screens show the selected loadout, and gameplay uses the "
+    "equipped weapon art and matching in-run upgrades. Pay special attention to Daniel with "
+    "Mia's clockwork disc launcher and pull-cord yo-yo, and Mia with Daniel's blaster and "
+    "mallet. Report oversized or misplaced weapon art, incorrect projectiles, wrong upgrade "
+    "families, lost selections, or a movement-speed difference between Daniel and Mia."
 )
 
 
@@ -240,8 +241,8 @@ def main() -> None:
         "schema": "rivetkind_external_beta_finalize_v1",
         "status": "PASS",
         "appId": APP_ID,
-        "versionName": "1.38",
-        "buildNumber": 39,
+        "versionName": "1.39",
+        "buildNumber": 40,
         "buildId": build_id,
         "processingState": build["attributes"].get("processingState"),
         "usesNonExemptEncryption": encryption_after,
@@ -258,7 +259,7 @@ def main() -> None:
     args.receipt.parent.mkdir(parents=True, exist_ok=True)
     args.receipt.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     os.chmod(args.receipt, 0o600)
-    print("PASS Rivetkind 1.38 build 39 assigned to external beta and submitted for review", flush=True)
+    print("PASS Rivetkind 1.39 build 40 assigned to external beta and submitted for review", flush=True)
 
 
 if __name__ == "__main__":

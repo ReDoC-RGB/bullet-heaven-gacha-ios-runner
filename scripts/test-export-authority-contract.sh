@@ -45,13 +45,13 @@ if missing: raise SystemExit('missing fail-closed exact authority checks: '+repr
 x=json.loads(Path(sys.argv[2]).read_text())
 expected={
  'schema':1,
- 'archiveSha256':'357a9c02ca942e3688d1a8e623bf8958233f6aeb02be301ef036a3a8e84d45ce',
- 'manifestSha256':'c7417fa97776bd78c6bed57a1d558100827fc064370897d86383f21192fe23b4',
- 'manifestByteLength':680938,
- 'inventoryCount':3050,
- 'framedTreeSha256':'d123b114b6b3cba3a2983afe4318847414de00f780df849835f716dfcbade881',
- 'candidateCommit':'50750c7dec86da842401f635504aa1aca4b0ee2a',
- 'candidateTree':'14833689a984708cda54603abf7da76d54f728d7',
+ 'archiveSha256':'d72f5efd7b3c8007fa07d362a6514906b5b6cb6a8ee396c9f7d09b7736b43443',
+ 'manifestSha256':'70e1abe2365e3168bd94aa6b52eb337b55ded2fae91d223f5b4f2248bae4ca99',
+ 'manifestByteLength':681154,
+ 'inventoryCount':3051,
+ 'framedTreeSha256':'7f9fb260a6970fec9d6662ee6cc954a39c07a117cc5eb5d976806994e5a30f4a',
+ 'candidateCommit':'3819bac73305655c2d051daa7fb79df5a9158711',
+ 'candidateTree':'f1dc8a2a9380e7436b6f3380cbf3a99bd153350a',
 }
 if x!=expected: raise SystemExit('tracked final export authority mismatch')
 for token in ['release-authority.json',"'archiveSha256':os.environ['BHG_EXPORT_SHA256']","'manifestSha256':os.environ['BHG_EXPORT_MANIFEST_SHA256']","'inventoryCount':int(os.environ['BHG_EXPORT_INVENTORY_COUNT'])","'candidateCommit':os.environ['BHG_CANDIDATE_COMMIT']"]:

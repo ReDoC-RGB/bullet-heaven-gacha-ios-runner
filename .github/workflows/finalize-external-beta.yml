@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: rivetkind-external-beta-build-39
+  group: rivetkind-external-beta-build-40
   cancel-in-progress: false
 
 jobs:

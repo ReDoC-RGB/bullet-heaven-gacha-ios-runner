@@ -20,14 +20,14 @@ from pathlib import Path, PurePosixPath
 
 
 BUNDLE = "com.wellmadesystems.bulletheavengacha.audition"
-BUILD_NUMBER = "36"
-VERSION = "1.35"
+BUILD_NUMBER = "39"
+VERSION = "1.38"
 EXPECTED_TEAM = "7D88UFWRTZ"
 EXPECTED_PROFILE_UUID = "94d6d06b-6de2-4a35-b0ca-bc3e04efd801"
 EXPECTED_PROFILE_SHA = "9261cfa49f68b936a2f0bf5fc65b657718812e1b810523a792cfafee98b9f9ff"
 EXPECTED_CERT_SHA = "3870fd7a823c074b79fdf2862c3a57b5432bcce43b963e759f81ea3789e1a107"
-EXPECTED_ARCHIVE_SHA = "485f4fc0c7990f4b15096e3305c240bb4b3f1890d7682434b1dbc2cfbb13a8e1"
-EXPECTED_ARCHIVE_BYTES = 253420541
+EXPECTED_ARCHIVE_SHA = "357a9c02ca942e3688d1a8e623bf8958233f6aeb02be301ef036a3a8e84d45ce"
+EXPECTED_ARCHIVE_BYTES = 255409411
 HEX40 = re.compile(r"[0-9a-f]{40}")
 HEX64 = re.compile(r"[0-9a-f]{64}")
 
@@ -82,11 +82,11 @@ def load_manifest(path: Path) -> dict:
     }
     if set(manifest) != required:
         raise SystemExit("detached manifest shape mismatch")
-    if manifest["schema"] != "rivetkind_phase1l_ios_xcode_export_manifest_v1" or manifest["status"] != "PASS":
+    if manifest["schema"] != "rivetkind_phase1o_ios_xcode_export_manifest_v1" or manifest["status"] != "PASS":
         raise SystemExit("detached manifest schema/status mismatch")
     if not HEX40.fullmatch(manifest["candidateCommit"]) or not HEX40.fullmatch(manifest["candidateTree"]):
         raise SystemExit("candidate provenance shape mismatch")
-    if manifest["candidateCommit"] != "61fe47ce9ad52afe492641a4bc7aea8eb723860e" or manifest["candidateTree"] != "4a84addf860dfb1ba43eb0ed78aa9869b9661585":
+    if manifest["candidateCommit"] != "50750c7dec86da842401f635504aa1aca4b0ee2a" or manifest["candidateTree"] != "14833689a984708cda54603abf7da76d54f728d7":
         raise SystemExit("candidate provenance authority mismatch")
     if (
         manifest["bundleIdentifier"] != BUNDLE

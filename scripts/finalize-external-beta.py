@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Finalize Rivetkind build 36 for the existing external TestFlight group."""
+"""Finalize Rivetkind build 39 for the existing external TestFlight group."""
 
 from __future__ import annotations
 
@@ -17,14 +17,15 @@ import requests
 API_ROOT = "https://api.appstoreconnect.apple.com"
 APP_ID = "6799331457"
 GROUP_ID = "4ed23db8-45ce-4a56-b68f-8a98b89308c0"
-BUILD_NUMBER = "36"
+BUILD_NUMBER = "39"
 LOCALE = "en-US"
 WHAT_TO_TEST = (
-    "Test the Rivetkind 1.35 review build: confirm the new Daniel-versus-boss app icon, "
-    "the redesigned in-game HUD, all four arena borders, Mia's disc and pull-cord "
-    "animations, stable pre-upgrade fire cadence, 10% smaller XP stars, and the tougher "
-    "guinea-pig boss encounter. Report any invisible player or weapon, safe spots, pathing "
-    "stalls, unreadable pickups or projectiles, or boss disappearance after an upgrade."
+    "Test Rivetkind 1.38 build 39. Run away continuously and confirm enemies keep fair "
+    "pressure from ahead and the sides without visible pop-ins or impossible escapes. "
+    "Coin rewards should be much lower than build 38. During an upgrade choice, use the "
+    "two reroll tokens and confirm each refresh offers three distinct, character-correct "
+    "choices; a third reroll must be unavailable. Report unfair spawns, pathing stalls, "
+    "reward duplication, excessive coins, broken rerolls, or non-Mia in-run choices."
 )
 
 
@@ -94,12 +95,12 @@ def main() -> None:
         )
         matches = payload["data"] if payload else []
         if len(matches) > 1:
-            raise RuntimeError("more than one Rivetkind build 36 exists")
+            raise RuntimeError(f"more than one Rivetkind build {BUILD_NUMBER} exists")
         if matches:
             build = matches[0]
             state = build["attributes"].get("processingState")
             if state != last_state:
-                print(f"Apple build 36 processingState={state}", flush=True)
+                print(f"Apple build {BUILD_NUMBER} processingState={state}", flush=True)
                 last_state = state
             if state == "VALID":
                 break
@@ -107,17 +108,17 @@ def main() -> None:
                 raise RuntimeError(f"Apple processing ended in {state}")
         time.sleep(20)
     else:
-        raise RuntimeError("timed out waiting for Apple build 36 to become VALID")
+        raise RuntimeError(f"timed out waiting for Apple build {BUILD_NUMBER} to become VALID")
 
     assert build is not None
     build_id = build["id"]
     if build["attributes"].get("buildAudienceType") != "APP_STORE_ELIGIBLE":
-        raise RuntimeError("build 36 is not eligible for external TestFlight distribution")
+        raise RuntimeError(f"build {BUILD_NUMBER} is not eligible for external TestFlight distribution")
     build_app = apple.request(
         "GET", f"/v1/builds/{build_id}/relationships/app", {200}
     )["data"]
     if build_app.get("id") != APP_ID:
-        raise RuntimeError("build 36 belongs to an unexpected App Store Connect app")
+        raise RuntimeError(f"build {BUILD_NUMBER} belongs to an unexpected App Store Connect app")
     groups = apple.request(
         "GET", f"/v1/apps/{APP_ID}/betaGroups", {200}, params={"limit": "200"}
     )["data"]
@@ -217,7 +218,7 @@ def main() -> None:
         params={"filter[build]": build_id, "limit": "10"},
     )["data"]
     if len(submissions) > 1:
-        raise RuntimeError("multiple beta review submissions exist for build 36")
+        raise RuntimeError(f"multiple beta review submissions exist for build {BUILD_NUMBER}")
     if submissions:
         submission = submissions[0]
         submitted_now = False
@@ -239,8 +240,8 @@ def main() -> None:
         "schema": "rivetkind_external_beta_finalize_v1",
         "status": "PASS",
         "appId": APP_ID,
-        "versionName": "1.35",
-        "buildNumber": 36,
+        "versionName": "1.38",
+        "buildNumber": 39,
         "buildId": build_id,
         "processingState": build["attributes"].get("processingState"),
         "usesNonExemptEncryption": encryption_after,
@@ -257,7 +258,7 @@ def main() -> None:
     args.receipt.parent.mkdir(parents=True, exist_ok=True)
     args.receipt.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     os.chmod(args.receipt, 0o600)
-    print("PASS Rivetkind 1.35 build 36 assigned to external beta and submitted for review", flush=True)
+    print("PASS Rivetkind 1.38 build 39 assigned to external beta and submitted for review", flush=True)
 
 
 if __name__ == "__main__":

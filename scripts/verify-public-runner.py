@@ -20,14 +20,15 @@ from pathlib import Path, PurePosixPath
 
 
 BUNDLE = "com.wellmadesystems.bulletheavengacha.audition"
-BUILD_NUMBER = "40"
-VERSION = "1.39"
+BUILD_NUMBER = "118"
+VERSION = "1.117"
 EXPECTED_TEAM = "7D88UFWRTZ"
 EXPECTED_PROFILE_UUID = "94d6d06b-6de2-4a35-b0ca-bc3e04efd801"
 EXPECTED_PROFILE_SHA = "9261cfa49f68b936a2f0bf5fc65b657718812e1b810523a792cfafee98b9f9ff"
 EXPECTED_CERT_SHA = "3870fd7a823c074b79fdf2862c3a57b5432bcce43b963e759f81ea3789e1a107"
-EXPECTED_ARCHIVE_SHA = "d72f5efd7b3c8007fa07d362a6514906b5b6cb6a8ee396c9f7d09b7736b43443"
-EXPECTED_ARCHIVE_BYTES = 253579695
+AUTHORITY = json.loads((Path(__file__).resolve().parent.parent / "release-authority.json").read_text())
+EXPECTED_ARCHIVE_SHA = AUTHORITY['archiveSha256']
+EXPECTED_ARCHIVE_BYTES = AUTHORITY['archiveByteLength']
 HEX40 = re.compile(r"[0-9a-f]{40}")
 HEX64 = re.compile(r"[0-9a-f]{64}")
 
@@ -86,7 +87,7 @@ def load_manifest(path: Path) -> dict:
         raise SystemExit("detached manifest schema/status mismatch")
     if not HEX40.fullmatch(manifest["candidateCommit"]) or not HEX40.fullmatch(manifest["candidateTree"]):
         raise SystemExit("candidate provenance shape mismatch")
-    if manifest["candidateCommit"] != "3819bac73305655c2d051daa7fb79df5a9158711" or manifest["candidateTree"] != "f1dc8a2a9380e7436b6f3380cbf3a99bd153350a":
+    if manifest["candidateCommit"] != AUTHORITY['candidateCommit'] or manifest["candidateTree"] != AUTHORITY['candidateTree']:
         raise SystemExit("candidate provenance authority mismatch")
     if (
         manifest["bundleIdentifier"] != BUNDLE

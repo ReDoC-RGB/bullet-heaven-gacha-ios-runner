@@ -1,7 +1,7 @@
 # Rivetkind iOS Build Runner
 
-This public repository contains infrastructure only. It has no application source, Unity project, generated Xcode project, game asset, signing material, APK, or IPA.
+Infrastructure only: no game source, assets, generated Xcode project or signing credentials are public.
 
-The manual workflows use a standard GitHub-hosted `macos-26` runner and fail closed unless Xcode 26 with the iPhoneOS 26 SDK (or newer) is active. They download one private, hash-pinned Unity Xcode export; verify the detached manifest and complete archive inventory before extraction; import protected signing inputs into an ephemeral keychain; compile and sign one IPA; verify its identity and provenance; and destroy transient payload and signing state.
+The manual TestFlight workflow is bound to Rivetkind 1.117 Build 118. It downloads one temporary bearer-protected export, verifies its full file inventory and hash-pinned release authority, archives on macOS with Xcode 26, validates the signature and Apple submission, and uploads to TestFlight. No public App Store review or release is performed.
 
-The workflows publish only bounded result or sanitized failure-diagnostic artifacts and have no automatic trigger. The currently authorized payload is Rivetkind v1.39 build 40.
+Legacy Ad Hoc and external-beta scripts remain historical and must not be dispatched for Build 118. Final beta assignment uses the existing Rivetkind group after Apple processing.
